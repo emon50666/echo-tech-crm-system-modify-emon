@@ -341,7 +341,7 @@ const InvoiceList: React.FC<InvoiceListProps> = ({ invoices, projects, clients, 
           </div>
         </div>
       )}
-
+      
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[110] p-4 print:hidden">
           <div className="bg-white rounded-3xl w-full max-md shadow-2xl animate-in zoom-in">
