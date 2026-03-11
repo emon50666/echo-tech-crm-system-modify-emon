@@ -90,6 +90,34 @@ const InvoiceList: React.FC<InvoiceListProps> = ({ invoices, projects, clients, 
     window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
   };
 
+  const handleEmailShare = (inv: Invoice) => {
+    const project = projects.find(p => p.id === inv.projectId);
+    const client = getClientForInvoice(inv);
+    if (!client || !project) return;
+    
+    const calcs = getCalculations(inv);
+    
+    const subject = `Invoice INV-${inv.id.slice(-6).toUpperCase()} from ${agency.name}`;
+    const message = `INVOICE FROM ${agency.name}\n` +
+      `--------------------------\n` +
+      `MD EMON TALUKDAR\n` +
+      `--------------------------\n` +
+      `Invoice #: INV-${inv.id.slice(-6).toUpperCase()}\n` +
+      `Project: ${project.title}\n` +
+      `Timeline: ${project.startDate} to ${project.estDeliveryDate}\n\n` +
+      `Total Project Price: ৳${calcs.total.toLocaleString()}\n` +
+      `Advance Payment Amount: ৳${calcs.advance.toLocaleString()}\n` +
+      `Total Due (Price - Advance): ৳${calcs.totalDue.toLocaleString()}\n` +
+      `Current Installment: ৳${inv.amount.toLocaleString()}\n` +
+      `Final Remaining Balance: ৳${calcs.remaining.toLocaleString()}\n\n` +
+      `Thank you for your business!`;
+      
+    const encodedSubject = encodeURIComponent(subject);
+    const encodedMsg = encodeURIComponent(message);
+    
+    window.open(`mailto:${client.email}?subject=${encodedSubject}&body=${encodedMsg}`, '_blank');
+  };
+
   const handleDownloadPDF = () => {
     window.print();
   };
@@ -157,6 +185,9 @@ const InvoiceList: React.FC<InvoiceListProps> = ({ invoices, projects, clients, 
                <div className="flex gap-3">
                  <button onClick={handleDownloadPDF} className="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition">
                    <i className="fa-solid fa-print"></i> Print / PDF
+                 </button>
+                 <button onClick={() => handleEmailShare(previewInvoice)} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition">
+                   <i className="fa-solid fa-envelope"></i> Email
                  </button>
                  <button onClick={() => handleWhatsAppShare(previewInvoice)} className="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition">
                    <i className="fa-brands fa-whatsapp"></i> WhatsApp
